@@ -13,3 +13,17 @@ sh_binary(
         "pkg/generated/clientset",   # output-pkg suffix (import path)
     ],
 )
+
+sh_binary(
+    name = "kubegen",
+    srcs = ["tools/kubegen.sh"],
+    data = [
+        "@io_k8s_code_generator//cmd/deepcopy-gen:deepcopy-gen",
+        "hack/boilerplate.go.txt",
+    ],
+    args = [
+        "$(location @io_k8s_code_generator//cmd/deepcopy-gen:deepcopy-gen)",
+        "$(location hack/boilerplate.go.txt)",
+        "github.com/felipe1496/hello_go/pkg/apis/sample/v1alpha1",
+    ],
+)
