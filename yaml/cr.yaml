@@ -1,0 +1,8 @@
+apiVersion: sample.felipe1496.github.com/v1alpha1
+kind: Database
+metadata:
+  name: meu-banco
+spec:
+  engine: postgres
+  version: "16"
+  storage: 10Gi

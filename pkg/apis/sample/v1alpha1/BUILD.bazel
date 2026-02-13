@@ -1,0 +1,53 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+# 1. Genrule para o DeepCopy
+genrule(
+    name = "generate_deepcopy",
+    srcs = [
+        "types.go",
+        "register.go",
+    ],
+    outs = ["zz_generated.deepcopy.go"],
+    cmd = "$(location @io_k8s_code_generator//:deepcopy-gen) " +
+          "--input-dirs pkg/apis/config/v1alpha1 " +
+          "--output-file-base zz_generated.deepcopy " +
+          "--go-header-file $(location :boilerplate.go.txt) " +
+          "&& mv zz_generated.deepcopy.go $@",
+    tools = ["@io_k8s_code_generator//:deepcopy-gen"],
+)
+
+# 2. Genrule para o Client (CRUD)
+# Nota: O client-gen costuma gerar uma estrutura de pastas inteira (clientset, informers, listers)
+genrule(
+    name = "generate_client",
+    srcs = [
+        "types.go",
+        "register.go",
+    ],
+    outs = ["client_generated.tar.gz"], # Empacotamos pois ele gera muitos arquivos
+    cmd = "$(location @io_k8s_code_generator//:client-gen) " +
+          "--clientset-name versioned " +
+          "--input-base pkg/apis " +
+          "--input config/v1alpha1 " +
+          "--output-package pkg/generated/clientset " +
+          "--go-header-file $(location :boilerplate.go.txt) " +
+          "&& tar -czf $@ pkg/generated/clientset",
+    tools = ["@io_k8s_code_generator//:client-gen"],
+)
+
+# 3. Biblioteca final que consome o código gerado
+go_library(
+    name = "v1alpha1",
+    srcs = [
+        "register.go",
+        "types.go",
+        ":generate_deepcopy", # Adiciona o arquivo gerado aqui
+    ],
+    importpath = "github.com/seu-repo/pkg/apis/config/v1alpha1",
+    visibility = ["//visibility:public"],
+    deps = [
+        "@io_k8s_apimachinery//pkg/apis/meta/v1:go_default_library",
+        "@io_k8s_apimachinery//pkg/runtime:go_default_library",
+        "@io_k8s_apimachinery//pkg/runtime/schema:go_default_library",
+    ],
+)

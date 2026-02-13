@@ -1,0 +1,15 @@
+sh_binary(
+    name = "clientgen",
+    srcs = ["tools/clientgen.sh"],
+    data = [
+        "@io_k8s_code_generator//cmd/client-gen:client-gen",
+        "hack/boilerplate.go.txt",
+    ],
+    args = [
+        "$(location @io_k8s_code_generator//cmd/client-gen:client-gen)",
+        "hack/boilerplate.go.txt",   # relativo ao workspace
+        "github.com/felipe1496/hello_go",
+        "pkg/generated/clientset",   # output-dir (workspace)
+        "pkg/generated/clientset",   # output-pkg suffix (import path)
+    ],
+)
