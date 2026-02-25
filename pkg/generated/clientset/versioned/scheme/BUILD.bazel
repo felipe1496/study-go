@@ -1,18 +1,19 @@
 load("@rules_go//go:def.bzl", "go_library")
 
 go_library(
-    name = "v1alpha1",
+    name = "scheme",
     srcs = [
         "doc.go",
         "register.go",
-        "types.go",
-        "zz_generated.deepcopy.go",  # gerado e commitado
     ],
-    importpath = "github.com/felipe1496/hello_go/pkg/apis/sample/v1alpha1",
+    importpath = "github.com/felipe1496/hello_go/pkg/generated/clientset/versioned/scheme",
     visibility = ["//visibility:public"],
     deps = [
+        "//pkg/apis/sample/v1alpha1",
         "@io_k8s_apimachinery//pkg/apis/meta/v1:meta",
         "@io_k8s_apimachinery//pkg/runtime",
         "@io_k8s_apimachinery//pkg/runtime/schema",
+        "@io_k8s_apimachinery//pkg/runtime/serializer",
+        "@io_k8s_apimachinery//pkg/util/runtime",
     ],
 )

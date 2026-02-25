@@ -1,0 +1,14 @@
+load("@rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "versioned",
+    srcs = ["clientset.go"],
+    importpath = "github.com/felipe1496/hello_go/pkg/generated/clientset/versioned",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//pkg/generated/clientset/versioned/typed/sample/v1alpha1",
+        "@io_k8s_client_go//discovery",
+        "@io_k8s_client_go//rest",
+        "@io_k8s_client_go//util/flowcontrol",
+    ],
+)

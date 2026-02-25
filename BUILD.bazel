@@ -1,3 +1,8 @@
+load("@gazelle//:def.bzl", "gazelle")
+load("@rules_go//go:def.bzl", "go_binary", "go_library")
+
+gazelle(name = "gazelle")
+
 sh_binary(
     name = "clientgen",
     srcs = ["tools/clientgen.sh"],
@@ -7,10 +12,10 @@ sh_binary(
     ],
     args = [
         "$(location @io_k8s_code_generator//cmd/client-gen:client-gen)",
-        "hack/boilerplate.go.txt",   # relativo ao workspace
+        "hack/boilerplate.go.txt",
         "github.com/felipe1496/hello_go",
-        "pkg/generated/clientset",   # output-dir (workspace)
-        "pkg/generated/clientset",   # output-pkg suffix (import path)
+        "pkg/generated/clientset",
+        "pkg/generated/clientset",
     ],
 )
 
@@ -26,4 +31,10 @@ sh_binary(
         "$(location hack/boilerplate.go.txt)",
         "github.com/felipe1496/hello_go/pkg/apis/sample/v1alpha1",
     ],
+)
+
+alias(
+    name = "hello_go",
+    actual = "//cmd/helloctl:helloctl",
+    visibility = ["//visibility:public"],
 )
